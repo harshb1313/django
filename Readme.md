@@ -18,3 +18,10 @@
 
 Done. Now app routes work.
 ----------------------------------------------------------------------------------
+
+Serialization means converting Django model data into JSON so it can be sent over the internet (API response).
+Define DB structure
+create a serializer
+create views with api_decorator for different type of request
+and add routes
+(also created a super User) 
