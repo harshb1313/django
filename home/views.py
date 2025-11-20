@@ -4,7 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
-
+#authentication imports
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -14,6 +18,8 @@ def api_home(request):
 
 
 class StudentsApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         students_obj = Student.objects.all()
@@ -60,7 +66,16 @@ class StudentsApi(APIView):
             return Response({'status':404, 'message':'Student not found'})
 
 
-
+class Registration(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            user = User.objects.get(username=serializer.data['username'])
+            token_obj= Token.objects.create(user=user)
+            return Response({'status':201, 'message':'User registered successfully','token': token_obj.key, 'data': serializer.data})
+        else:
+            return Response({'status':400, 'message':'Bad Request', 'errors': serializer.errors})
 
 
 

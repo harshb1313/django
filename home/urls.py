@@ -11,4 +11,5 @@ urlpatterns = [
     # path('students/partial-update/<int:id>/', views.patial_update_student, name='partial_update_student'),
     # path('students/delete/<int:id>/', views.delete_student, name='delete_student'),
     path('books/', views.api_books, name='api_books'),
+    path('register/', views.Registration.as_view(), name='user_registration'),
 ]
