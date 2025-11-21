@@ -17,7 +17,7 @@
    path('', include('home.urls'))
 
 Done. Now app routes work.
---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
 
 Serialization means converting Django model data into JSON so it can be sent over the internet (API response).
 Define DB structure

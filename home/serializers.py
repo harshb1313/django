@@ -56,12 +56,14 @@ class BookSerializer (serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User,
+        model = User   # ← REMOVE THE COMMA
         fields = ['username', 'password']
-    
+
     def create(self, validated_data):
-        user = User.objects.create_user(username=validated_data['username'])
-        user.set_password(validated_data['password'])
-        user.save()
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password']  # simpler, cleaner
+        )
         return user
+
     #for hashing password

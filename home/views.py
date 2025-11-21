@@ -9,7 +9,8 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
+#jwt imports
+from rest_framework_simplejwt.authentication import JWTAuthentication
 # Create your views here.
 
 @api_view(['GET'])
@@ -18,7 +19,8 @@ def api_home(request):
 
 
 class StudentsApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -65,17 +67,29 @@ class StudentsApi(APIView):
         except Student.DoesNotExist:
             return Response({'status':404, 'message':'Student not found'})
 
-
+from rest_framework_simplejwt.tokens import RefreshToken
 class Registration(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save()
             user = User.objects.get(username=serializer.data['username'])
-            token_obj= Token.objects.create(user=user)
-            return Response({'status':201, 'message':'User registered successfully','token': token_obj.key, 'data': serializer.data})
-        else:
-            return Response({'status':400, 'message':'Bad Request', 'errors': serializer.errors})
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'status': 201,
+                'message': 'User registered successfully',
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'data': serializer.data
+            })
+        
+        return Response({
+            'status': 400,
+            'message': 'Bad Request',
+            'errors': serializer.errors
+        })
+
 
 
 
